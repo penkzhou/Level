@@ -46,6 +46,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.preference.PreferenceManager
 import me.greenrobot.apps.level.orientation.Orientation
 import me.greenrobot.apps.level.orientation.OrientationListener
@@ -168,8 +171,10 @@ class Level : AppCompatActivity(), OrientationListener {
                     rulerCalView!!.max = 200
                     rulerCalView!!.progress = progress
                     rulerCalView!!.thumb = ContextCompat.getDrawable(context!!, R.drawable.ic_fine)
-                    rulerCalView!!.thumb.setColorFilter(
-                        getThemeColor(context, R.attr.colorAccent),
+                    // Get the theme color
+                    val colorAccent = getThemeColor(context, R.attr.colorAccent)
+                    rulerCalView!!.thumb.setTint(colorAccent)
+                    rulerCalView!!.thumb.setTintMode(
                         PorterDuff.Mode.MULTIPLY,
                     )
                     val layoutParams =
@@ -184,11 +189,9 @@ class Level : AppCompatActivity(), OrientationListener {
                     rulerCoarseCalView!!.progress = coarseprogress
                     rulerCoarseCalView!!.thumb =
                         ContextCompat.getDrawable(context!!, R.drawable.ic_coarse)
-                    rulerCoarseCalView!!.thumb.setColorFilter(
-                        getThemeColor(
-                            context,
-                            R.attr.colorAccent,
-                        ),
+                    val thumbColorAccent = getThemeColor(context, R.attr.colorAccent)
+                    rulerCoarseCalView!!.thumb.setTint(thumbColorAccent)
+                    rulerCoarseCalView!!.thumb.setTintMode(
                         PorterDuff.Mode.MULTIPLY,
                     )
                     val layoutParams2 =
@@ -321,7 +324,7 @@ class Level : AppCompatActivity(), OrientationListener {
             rulerCoarseCalView = null
             if (rulerResetButtonView != null) rulerLayout.removeView(rulerResetButtonView)
             rulerResetButtonView = null
-            window.decorView.systemUiVisibility = 0
+            WindowCompat.getInsetsController(window, window.decorView).show(WindowInsetsCompat.Type.systemBars())
             invalidateOptionsMenu()
         }
     }
@@ -405,10 +408,10 @@ class Level : AppCompatActivity(), OrientationListener {
     }
 
     private fun setFullscreenMode() {
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE or
-            View.SYSTEM_UI_FLAG_FULLSCREEN or
-            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            hide(WindowInsetsCompat.Type.systemBars())
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
     }
 
     companion object {
