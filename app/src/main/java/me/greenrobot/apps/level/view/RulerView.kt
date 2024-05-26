@@ -38,6 +38,8 @@ class RulerView(context: Context?, var dpmm: Double, var dpfi: Double) : View(co
     var textSize: Int
     var db: Int = ContextCompat.getColor(context!!, R.color.black)
 
+    private val paint = Paint()
+
     init {
         textSize = (dpmm * 2.5).toInt()
         lineWidth = (dpmm * 0.15).toFloat()
@@ -51,7 +53,6 @@ class RulerView(context: Context?, var dpmm: Double, var dpfi: Double) : View(co
         heightmm = heightPx / dpmm
         heightFracInch = heightPx / dpfi
 
-        val paint = Paint()
         paint.isAntiAlias = true
         paint.color = db
         paint.alpha = 255
