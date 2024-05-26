@@ -1,3 +1,24 @@
+/*
+ *
+ * Copyright (C) 2014  Antoine Vianey
+ * Copyright (C) 2021- woheller69
+ * Copyright 2024 The Old Autumn Project
+ * An Android Bubble Level application.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Level is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Level. If not, see <http://www.gnu.org/licenses/>
+ *
+ */
 package me.greenrobot.apps.level.orientation
 
 import android.content.Context
@@ -14,25 +35,6 @@ import kotlin.math.asin
 import kotlin.math.min
 import kotlin.math.sqrt
 
-/*
-*  This file is part of Level (an Android Bubble Level).
-*  <https://github.com/avianey/Level>
-*
-*  Copyright (C) 2014 Antoine Vianey
-*
-*  Level is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*
-*  Level is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License
-*  along with Level. If not, see <http://www.gnu.org/licenses/>
-*/
 class OrientationProvider(context: Context?) : SensorEventListener {
     /**
      * Calibration
@@ -44,11 +46,11 @@ class OrientationProvider(context: Context?) : SensorEventListener {
     /**
      * Rotation Matrix
      */
-    private val MAG = floatArrayOf(1f, 1f, 1f)
-    private val I = FloatArray(16)
-    private val R = FloatArray(16)
+    private val mag = floatArrayOf(1f, 1f, 1f)
+    private val i = FloatArray(16)
+    private val r = FloatArray(16)
     private val outR = FloatArray(16)
-    private val LOC = FloatArray(3)
+    private val loc = FloatArray(3)
 
     /**
      * Orientation
@@ -84,9 +86,7 @@ class OrientationProvider(context: Context?) : SensorEventListener {
             return field
         }
         private set
-    /**
-     * Returns true if the manager is listening to orientation changes
-     */
+
     /**
      * indicates whether or not Accelerometer Sensor is running
      */
@@ -126,10 +126,10 @@ class OrientationProvider(context: Context?) : SensorEventListener {
     }
 
     private val requiredSensors: List<Int>
-        get() = listOf(
-            Sensor.TYPE_ACCELEROMETER
-        )
-
+        get() =
+            listOf(
+                Sensor.TYPE_ACCELEROMETER,
+            )
 
     /**
      * Registers a listener and start listening
@@ -160,7 +160,7 @@ class OrientationProvider(context: Context?) : SensorEventListener {
                 isListening = sensorManager!!.registerListener(
                     this,
                     sensor,
-                    SensorManager.SENSOR_DELAY_NORMAL
+                    SensorManager.SENSOR_DELAY_NORMAL,
                 ) && isListening
             }
         }
@@ -169,7 +169,10 @@ class OrientationProvider(context: Context?) : SensorEventListener {
         }
     }
 
-    override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
+    override fun onAccuracyChanged(
+        sensor: Sensor,
+        accuracy: Int,
+    ) {
     }
 
     override fun onSensorChanged(event: SensorEvent) {
@@ -177,68 +180,76 @@ class OrientationProvider(context: Context?) : SensorEventListener {
         oldRoll = roll
         oldBalance = balance
 
-        SensorManager.getRotationMatrix(R, I, event.values, MAG)
+        SensorManager.getRotationMatrix(r, i, event.values, mag)
 
         when (displayOrientation) {
-            Surface.ROTATION_270 -> SensorManager.remapCoordinateSystem(
-                R,
-                SensorManager.AXIS_MINUS_Y,
-                SensorManager.AXIS_X,
-                outR
-            )
+            Surface.ROTATION_270 ->
+                SensorManager.remapCoordinateSystem(
+                    r,
+                    SensorManager.AXIS_MINUS_Y,
+                    SensorManager.AXIS_X,
+                    outR,
+                )
 
-            Surface.ROTATION_180 -> SensorManager.remapCoordinateSystem(
-                R,
-                SensorManager.AXIS_MINUS_X,
-                SensorManager.AXIS_MINUS_Y,
-                outR
-            )
+            Surface.ROTATION_180 ->
+                SensorManager.remapCoordinateSystem(
+                    r,
+                    SensorManager.AXIS_MINUS_X,
+                    SensorManager.AXIS_MINUS_Y,
+                    outR,
+                )
 
-            Surface.ROTATION_90 -> SensorManager.remapCoordinateSystem(
-                R,
-                SensorManager.AXIS_Y,
-                SensorManager.AXIS_MINUS_X,
-                outR
-            )
+            Surface.ROTATION_90 ->
+                SensorManager.remapCoordinateSystem(
+                    r,
+                    SensorManager.AXIS_Y,
+                    SensorManager.AXIS_MINUS_X,
+                    outR,
+                )
 
-            Surface.ROTATION_0 -> SensorManager.remapCoordinateSystem(
-                R,
-                SensorManager.AXIS_X,
-                SensorManager.AXIS_Y,
-                outR
-            )
+            Surface.ROTATION_0 ->
+                SensorManager.remapCoordinateSystem(
+                    r,
+                    SensorManager.AXIS_X,
+                    SensorManager.AXIS_Y,
+                    outR,
+                )
 
-            else -> SensorManager.remapCoordinateSystem(
-                R,
-                SensorManager.AXIS_X,
-                SensorManager.AXIS_Y,
-                outR
-            )
+            else ->
+                SensorManager.remapCoordinateSystem(
+                    r,
+                    SensorManager.AXIS_X,
+                    SensorManager.AXIS_Y,
+                    outR,
+                )
         }
-        SensorManager.getOrientation(outR, LOC)
+        SensorManager.getOrientation(outR, loc)
 
         // normalize z on ux, uy
         tmp = sqrt((outR[8] * outR[8] + outR[9] * outR[9]).toDouble()).toFloat()
         tmp = (if (tmp == 0f) 0f else outR[8] / tmp)
 
         // LOC[0] compass
-        pitch = Math.toDegrees(LOC[1].toDouble()).toFloat()
-        roll = -Math.toDegrees(LOC[2].toDouble()).toFloat()
+        pitch = Math.toDegrees(loc[1].toDouble()).toFloat()
+        roll = -Math.toDegrees(loc[2].toDouble()).toFloat()
         balance = Math.toDegrees(asin(tmp.toDouble())).toFloat()
 
         // calculating minimal sensor step
         if (oldRoll != roll || oldPitch != pitch || oldBalance != balance) {
             if (oldPitch != pitch) {
-                minStep = min(minStep.toDouble(), abs((pitch - oldPitch).toDouble()))
-                    .toFloat()
+                minStep =
+                    min(minStep.toDouble(), abs((pitch - oldPitch).toDouble()))
+                        .toFloat()
             }
             if (oldRoll != roll) {
-                minStep = min(minStep.toDouble(), abs((roll - oldRoll).toDouble()))
-                    .toFloat()
+                minStep =
+                    min(minStep.toDouble(), abs((roll - oldRoll).toDouble()))
+                        .toFloat()
             }
             if (oldBalance != balance) {
-                minStep = min(minStep.toDouble(), abs((balance - oldBalance).toDouble()))
-                    .toFloat()
+                minStep =
+                    min(minStep.toDouble(), abs((balance - oldBalance).toDouble()))
+                        .toFloat()
             }
             if (refValues < MIN_VALUES) {
                 refValues++
@@ -246,22 +257,23 @@ class OrientationProvider(context: Context?) : SensorEventListener {
         }
 
         if (!locked || orientation == null) {
-            orientation = if (pitch < -45 && pitch > -135) {
-                // top side up
-                Orientation.TOP
-            } else if (pitch > 45 && pitch < 135) {
-                // bottom side up
-                Orientation.BOTTOM
-            } else if (roll > 45) {
-                // right side up
-                Orientation.RIGHT
-            } else if (roll < -45) {
-                // left side up
-                Orientation.LEFT
-            } else {
-                // landing
-                Orientation.LANDING
-            }
+            orientation =
+                if (pitch < -45 && pitch > -135) {
+                    // top side up
+                    Orientation.TOP
+                } else if (pitch > 45 && pitch < 135) {
+                    // bottom side up
+                    Orientation.BOTTOM
+                } else if (roll > 45) {
+                    // right side up
+                    Orientation.RIGHT
+                } else if (roll < -45) {
+                    // left side up
+                    Orientation.LEFT
+                } else {
+                    // landing
+                    Orientation.LANDING
+                }
         }
 
         if (calibrating) {
@@ -297,9 +309,10 @@ class OrientationProvider(context: Context?) : SensorEventListener {
     fun resetCalibration() {
         var success = false
         try {
-            success = activity!!.getPreferences(
-                Context.MODE_PRIVATE
-            ).edit().clear().commit()
+            success =
+                activity!!.getPreferences(
+                    Context.MODE_PRIVATE,
+                ).edit().clear().commit()
         } catch (e: Exception) {
         }
         if (success) {
@@ -311,7 +324,6 @@ class OrientationProvider(context: Context?) : SensorEventListener {
             listener!!.onCalibrationReset(success)
         }
     }
-
 
     /**
      * Tell the provider to save the calibration
@@ -333,11 +345,12 @@ class OrientationProvider(context: Context?) : SensorEventListener {
          * @return the minimal sensor step
          * 0 if not yet known
          */
-        get() = if (refValues >= MIN_VALUES) {
-            minStep
-        } else {
-            0f
-        }
+        get() =
+            if (refValues >= MIN_VALUES) {
+                minStep
+            } else {
+                0f
+            }
 
     companion object {
         private const val MIN_VALUES = 20
@@ -349,6 +362,7 @@ class OrientationProvider(context: Context?) : SensorEventListener {
         private const val SAVED_ROLL = "roll."
         private const val SAVED_BALANCE = "balance."
         private var provider: OrientationProvider? = null
+
         fun getInstance(context: Context?): OrientationProvider? {
             if (provider == null) {
                 provider = OrientationProvider(context)

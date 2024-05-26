@@ -1,3 +1,24 @@
+/*
+ *
+ * Copyright (C) 2014  Antoine Vianey
+ * Copyright (C) 2021- woheller69
+ * Copyright 2024 The Old Autumn Project
+ * An Android Bubble Level application.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Level is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Level. If not, see <http://www.gnu.org/licenses/>
+ *
+ */
 package me.greenrobot.apps.level.painter
 
 import android.content.Context
@@ -27,38 +48,11 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.math.tan
 
-/*
-*  This file is part of Level (an Android Bubble Level).
-*  <https://github.com/avianey/Level>
-*
-*  Copyright (C) 2014 Antoine Vianey
-*
-*  Level is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
-*  (at your option) any later version.
-*
-*  Level is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License
-*  along with Level. If not, see <http://www.gnu.org/licenses/>
-*/
 class LevelPainter(
-    /**
-     * Possesseur de la surface
-     */
-    private val surfaceHolder: SurfaceHolder, context: Context,
-    /**
-     * Animation
-     */
-    private val handler: Handler
+    private val surfaceHolder: SurfaceHolder,
+    context: Context,
+    private val handler: Handler,
 ) : Runnable {
-    /**
-     * Etats du thread
-     */
     private var initialized: Boolean
     private var wait: Boolean
     private var canvasWidth = 0
@@ -256,7 +250,7 @@ class LevelPainter(
             displayBackgroundText,
             0,
             displayBackgroundText.length,
-            rect
+            rect,
         )
         this.lcdHeight = rect.height()
         this.lcdWidth = rect.width()
@@ -341,17 +335,23 @@ class LevelPainter(
     /**
      * Modification / initialisation de la taille de l'ecran
      */
-    fun setSurfaceSize(width: Int, height: Int) {
+    fun setSurfaceSize(
+        width: Int,
+        height: Int,
+    ) {
         canvasWidth = width
         canvasHeight = height
 
-        levelMaxDimension = min(
-            (min(height.toDouble(), width.toDouble()) - 2 * displayGap).toDouble(),
-            (max(
-                height.toDouble(),
-                width.toDouble()
-            ) - 2 * (sensorGap + 2 * infoHeight + 3 * displayGap + lcdHeight)).toDouble()
-        ).toInt()
+        levelMaxDimension =
+            min(
+                (min(height.toDouble(), width.toDouble()) - 2 * displayGap),
+                (
+                    max(
+                        height.toDouble(),
+                        width.toDouble(),
+                    ) - 2 * (sensorGap + 2 * infoHeight + 3 * displayGap + lcdHeight)
+                ),
+            ).toInt()
 
         setOrientation(orientation)
     }
@@ -362,11 +362,13 @@ class LevelPainter(
             timeDiff = (currentTime - lastTime) / 1000.0
             posX = orientation.reverse * (2 * x - minLevelX - maxLevelX) / levelMinusBubbleWidth
             when (orientation) {
-                Orientation.TOP, Orientation.BOTTOM -> speedX =
-                    orientation.reverse * (2 * angleX - posX) * viscosityValue
+                Orientation.TOP, Orientation.BOTTOM ->
+                    speedX =
+                        orientation.reverse * (2 * angleX - posX) * viscosityValue
 
-                Orientation.LEFT, Orientation.RIGHT -> speedX =
-                    orientation.reverse * (2 * angleY - posX) * viscosityValue
+                Orientation.LEFT, Orientation.RIGHT ->
+                    speedX =
+                        orientation.reverse * (2 * angleY - posX) * viscosityValue
 
                 Orientation.LANDING -> {
                     posY = (2 * y - minLevelY - maxLevelY) / levelMinusBubbleHeight
@@ -402,7 +404,7 @@ class LevelPainter(
         canvas.save()
 
         // decouple display speed from sensor speed
-        if ((System.currentTimeMillis() - angleDispUpdateTime) > angleDispInterval) {
+        if ((System.currentTimeMillis() - angleDispUpdateTime) > ANGLE_DISP_INTERVAL) {
             angle1DispValue = angle1
             angle2DispValue = angle2
             angleDispUpdateTime = System.currentTimeMillis()
@@ -411,7 +413,7 @@ class LevelPainter(
         canvas.drawColor(backgroundColor)
 
         if (orientation == Orientation.LANDING) {
-            //canvas.drawText(infoText, middleX, infoY, infoPaint);
+            // canvas.drawText(infoText, middleX, infoY, infoPaint);
             if (lockEnabled) {
                 display!!.bounds = lockRect
                 display!!.draw(canvas)
@@ -419,20 +421,20 @@ class LevelPainter(
                     LOCKED_BACKGROUND,
                     middleX.toFloat(),
                     lockRect.centerY() + lockHeight / 2.0f,
-                    lockBackgroundPaint
+                    lockBackgroundPaint,
                 )
                 canvas.drawText(
                     lockText,
                     middleX.toFloat(),
                     (lockRect.bottom + displayGap).toFloat(),
-                    infoPaint
+                    infoPaint,
                 )
                 if (locked) {
                     canvas.drawText(
                         LOCKED,
                         middleX.toFloat(),
                         lockRect.centerY() + lockHeight / 2.0f,
-                        lockForegroundPaint
+                        lockForegroundPaint,
                     )
                 }
             }
@@ -441,68 +443,70 @@ class LevelPainter(
                     middleX - (displayRect.width() + displayGap),
                     displayRect.top,
                     middleX - displayGap,
-                    displayRect.bottom
+                    displayRect.bottom,
                 )
                 display!!.draw(canvas)
                 display!!.setBounds(
                     middleX + displayGap,
                     displayRect.top,
                     middleX + displayRect.width() + displayGap,
-                    displayRect.bottom
+                    displayRect.bottom,
                 )
                 display!!.draw(canvas)
                 canvas.drawText(
                     displayBackgroundText,
                     middleX - (displayRect.width() + displayGap - arrowWidth) / 2.0f - displayPadding,
                     displayRect.centerY() + lcdHeight / 2.0f,
-                    lcdBackgroundPaint
+                    lcdBackgroundPaint,
                 )
                 canvas.drawText(
                     displayFormat.format(angle2DispValue.toDouble()),
                     middleX - (displayRect.width() + displayGap - arrowWidth) / 2.0f - displayPadding,
                     displayRect.centerY() + lcdHeight / 2.0f,
-                    lcdForegroundPaint
+                    lcdForegroundPaint,
                 )
                 if (angle2raw > 0.1f) {
-                    canvas.drawText( //left-right →
+                    canvas.drawText( // left-right →
                         "\u25b6",
                         middleX - (displayRect.width() + displayGap) + arrowWidth / 2.0f + displayPadding / 2.0f,
                         displayRect.centerY() + lcdHeight / 2.0f,
-                        lcdForegroundPaint
+                        lcdForegroundPaint,
                     )
                 } else if (angle2raw < -0.1f) {
-                    canvas.drawText( //left-right ←
+                    canvas.drawText( // left-right ←
                         "\u25c0",
                         middleX - (displayRect.width() + displayGap) + arrowWidth / 2.0f + displayPadding / 2.0f,
                         displayRect.centerY() + lcdHeight / 2.0f,
-                        lcdForegroundPaint
+                        lcdForegroundPaint,
                     )
                 }
                 canvas.drawText(
                     displayBackgroundText,
                     middleX + displayGap + (displayRect.width() - arrowWidth) / 2.0f,
                     displayRect.centerY() + lcdHeight / 2.0f,
-                    lcdBackgroundPaint
+                    lcdBackgroundPaint,
                 )
                 canvas.drawText(
                     displayFormat.format(angle1DispValue.toDouble()),
                     middleX + displayGap + (displayRect.width() - arrowWidth) / 2.0f,
                     displayRect.centerY() + lcdHeight / 2.0f,
-                    lcdForegroundPaint
+                    lcdForegroundPaint,
                 )
                 if (angle1raw > 0.1f) {
-                    canvas.drawText( //up-down ↓
+                    canvas.drawText( // up-down ↓
                         "\u25bc",
-                        middleX + displayGap + (displayRect.width() - arrowWidth) / 2.0f + displayRect.width() / 2.0f - displayPadding / 2.0f,
+                        middleX + displayGap + (displayRect.width() - arrowWidth) / 2.0f +
+                            displayRect.width() / 2.0f - displayPadding / 2.0f,
                         displayRect.centerY() + lcdHeight / 2.0f,
-                        lcdForegroundPaint
+                        lcdForegroundPaint,
                     )
                 } else if (angle1raw < -0.1f) {
-                    canvas.drawText( //up-down ↑
+                    canvas.drawText( // up-down ↑
                         "\u25b2",
-                        middleX + displayGap + (displayRect.width() - arrowWidth) / 2.0f + displayRect.width() / 2.0f - displayPadding / 2.0f,
+                        middleX + displayGap + (displayRect.width() - arrowWidth) / 2.0f +
+                            displayRect.width() / 2.0f - displayPadding / 2.0f,
                         displayRect.centerY() + lcdHeight / 2.0f,
-                        lcdForegroundPaint
+                        lcdForegroundPaint,
                     )
                 }
             }
@@ -510,30 +514,42 @@ class LevelPainter(
                 (x - halfBubbleWidth).toInt(),
                 (y - halfBubbleHeight).toInt(),
                 (x + halfBubbleWidth).toInt(),
-                (y + halfBubbleHeight).toInt()
+                (y + halfBubbleHeight).toInt(),
             )
             level2D!!.draw(canvas)
             bubble2D!!.draw(canvas)
             marker2D!!.draw(canvas)
             canvas.drawLine(
-                minLevelX.toFloat(), middleY.toFloat(),
-                (middleX - halfMarkerGap).toFloat(), middleY.toFloat(), infoPaint
+                minLevelX.toFloat(),
+                middleY.toFloat(),
+                (middleX - halfMarkerGap).toFloat(),
+                middleY.toFloat(),
+                infoPaint,
             )
             canvas.drawLine(
-                (middleX + halfMarkerGap).toFloat(), middleY.toFloat(),
-                maxLevelX.toFloat(), middleY.toFloat(), infoPaint
+                (middleX + halfMarkerGap).toFloat(),
+                middleY.toFloat(),
+                maxLevelX.toFloat(),
+                middleY.toFloat(),
+                infoPaint,
             )
             canvas.drawLine(
-                middleX.toFloat(), minLevelY.toFloat(),
-                middleX.toFloat(), (middleY - halfMarkerGap).toFloat(), infoPaint
+                middleX.toFloat(),
+                minLevelY.toFloat(),
+                middleX.toFloat(),
+                (middleY - halfMarkerGap).toFloat(),
+                infoPaint,
             )
             canvas.drawLine(
-                middleX.toFloat(), (middleY + halfMarkerGap).toFloat(),
-                middleX.toFloat(), maxLevelY.toFloat(), infoPaint
+                middleX.toFloat(),
+                (middleY + halfMarkerGap).toFloat(),
+                middleX.toFloat(),
+                maxLevelY.toFloat(),
+                infoPaint,
             )
         } else {
             canvas.rotate(orientation.rotation.toFloat(), middleX.toFloat(), middleY.toFloat())
-            //canvas.drawText(infoText, middleX, infoY, infoPaint);
+            // canvas.drawText(infoText, middleX, infoY, infoPaint);
             if (lockEnabled) {
                 display!!.bounds = lockRect
                 display!!.draw(canvas)
@@ -541,20 +557,20 @@ class LevelPainter(
                     LOCKED_BACKGROUND,
                     middleX.toFloat(),
                     lockRect.centerY() + lockHeight / 2.0f,
-                    lockBackgroundPaint
+                    lockBackgroundPaint,
                 )
                 canvas.drawText(
                     lockText,
                     middleX.toFloat(),
                     (lockRect.bottom + displayGap).toFloat(),
-                    infoPaint
+                    infoPaint,
                 )
                 if (locked) {
                     canvas.drawText(
                         LOCKED,
                         middleX.toFloat(),
                         lockRect.centerY() + lockHeight / 2.0f,
-                        lockForegroundPaint
+                        lockForegroundPaint,
                     )
                 }
             }
@@ -565,13 +581,13 @@ class LevelPainter(
                     displayBackgroundText,
                     middleX - arrowWidth / 2.0f,
                     displayRect.centerY() + lcdHeight / 2.0f,
-                    lcdBackgroundPaint
+                    lcdBackgroundPaint,
                 )
                 canvas.drawText(
                     displayFormat.format(angle1DispValue.toDouble()),
                     middleX - arrowWidth / 2.0f,
                     displayRect.centerY() + lcdHeight / 2.0f,
-                    lcdForegroundPaint
+                    lcdForegroundPaint,
                 )
 
                 if (angle1raw > 0.1f) {
@@ -580,14 +596,14 @@ class LevelPainter(
                             "\u25bc",
                             middleX - arrowWidth / 2.0f + displayRect.width() / 2.0f - displayPadding / 2.0f,
                             displayRect.centerY() + lcdHeight / 2.0f,
-                            lcdForegroundPaint
+                            lcdForegroundPaint,
                         )
                     } else {
                         canvas.drawText(
                             "\u25b2",
                             middleX - arrowWidth / 2.0f + displayRect.width() / 2.0f - displayPadding / 2.0f,
                             displayRect.centerY() + lcdHeight / 2.0f,
-                            lcdForegroundPaint
+                            lcdForegroundPaint,
                         )
                     }
                 } else if (angle1raw < -0.1f) {
@@ -596,14 +612,14 @@ class LevelPainter(
                             "\u25b2",
                             middleX - arrowWidth / 2.0f + displayRect.width() / 2.0f - displayPadding / 2.0f,
                             displayRect.centerY() + lcdHeight / 2.0f,
-                            lcdForegroundPaint
+                            lcdForegroundPaint,
                         )
                     } else {
                         canvas.drawText(
                             "\u25bc",
                             middleX - arrowWidth / 2.0f + displayRect.width() / 2.0f - displayPadding / 2.0f,
                             displayRect.centerY() + lcdHeight / 2.0f,
-                            lcdForegroundPaint
+                            lcdForegroundPaint,
                         )
                     }
                 }
@@ -615,13 +631,13 @@ class LevelPainter(
                 minLevelX + levelBorderWidth,
                 minLevelY + levelBorderHeight,
                 maxLevelX - levelBorderWidth,
-                maxLevelY - levelBorderHeight
+                maxLevelY - levelBorderHeight,
             )
             bubble1D!!.setBounds(
                 (x - halfBubbleWidth).toInt(),
                 minBubble,
                 (x + halfBubbleWidth).toInt(),
-                maxBubble
+                maxBubble,
             )
             bubble1D!!.draw(canvas)
             // marker
@@ -629,14 +645,14 @@ class LevelPainter(
                 middleX - halfMarkerGap - markerThickness,
                 minLevelY,
                 middleX - halfMarkerGap,
-                maxLevelY
+                maxLevelY,
             )
             marker1D!!.draw(canvas)
             marker1D!!.setBounds(
                 middleX + halfMarkerGap,
                 minLevelY,
                 middleX + halfMarkerGap + markerThickness,
-                maxLevelY
+                maxLevelY,
             )
             marker1D!!.draw(canvas)
         }
@@ -648,9 +664,6 @@ class LevelPainter(
         if (!(lockEnabled && locked) || !initialized) {
             synchronized(this.surfaceHolder) {
                 orientation = newOrientation
-                /**
-                 * Dimensions
-                 */
                 /**
                  * Dimensions
                  */
@@ -708,14 +721,25 @@ class LevelPainter(
 
                 // display
                 if (orientation == Orientation.LANDING) {
-                    displayRect[middleX - lcdWidth / 2 - arrowWidth / 2 - displayPadding, sensorY - displayGap - 2 * displayPadding - lcdHeight - infoHeight / 2, middleX + lcdWidth / 2 + displayPadding + arrowWidth / 2] =
+                    displayRect[
+                        middleX - lcdWidth / 2 - arrowWidth / 2 - displayPadding,
+                        sensorY - displayGap - 2 * displayPadding - lcdHeight - infoHeight / 2,
+                        middleX + lcdWidth / 2 + displayPadding + arrowWidth / 2,
+                    ] =
                         sensorY - displayGap - infoHeight / 2
                 } else {
-                    displayRect[middleX - arrowWidth / 2 - lcdWidth / 2 - displayPadding, sensorY - displayGap - 2 * displayPadding - lcdHeight - infoHeight / 2, middleX + lcdWidth / 2 + displayPadding + arrowWidth / 2] =
+                    displayRect[
+                        middleX - arrowWidth / 2 - lcdWidth / 2 - displayPadding,
+                        sensorY - displayGap - 2 * displayPadding - lcdHeight - infoHeight / 2,
+                        middleX + lcdWidth / 2 + displayPadding + arrowWidth / 2,
+                    ] =
                         sensorY - displayGap - infoHeight / 2
                 }
                 // lock
-                lockRect[middleX - lockWidth / 2 - displayPadding, middleY - height / 2 + displayGap, middleX + lockWidth / 2 + displayPadding] =
+                lockRect[
+                    middleX - lockWidth / 2 - displayPadding,
+                    middleY - height / 2 + displayGap, middleX + lockWidth / 2 + displayPadding,
+                ] =
                     middleY - height / 2 + displayGap + 2 * displayPadding + lockHeight
 
                 // marker
@@ -732,7 +756,7 @@ class LevelPainter(
                     middleX - halfMarkerGap - markerThickness,
                     middleY - halfMarkerGap - markerThickness,
                     middleX + halfMarkerGap + markerThickness,
-                    middleY + halfMarkerGap + markerThickness
+                    middleY + halfMarkerGap + markerThickness,
                 )
 
                 x = ((maxLevelX + minLevelX).toDouble()) / 2
@@ -749,7 +773,7 @@ class LevelPainter(
         newOrientation: Orientation,
         newPitch: Float,
         newRoll: Float,
-        newBalance: Float
+        newBalance: Float,
     ) {
         if (orientation != newOrientation) {
             setOrientation(newOrientation)
@@ -814,22 +838,33 @@ class LevelPainter(
         }
     }
 
-    fun onTouch(touchX: Int, touchY: Int) {
+    fun onTouch(
+        touchX: Int,
+        touchY: Int,
+    ) {
         if (lockEnabled) {
-            if (((orientation == Orientation.TOP || orientation == Orientation.LANDING)
-                        && lockRect.contains(touchX, touchY))
-                || (orientation == Orientation.BOTTOM
-                        && lockRect.contains(touchX, canvasHeight - touchY))
-                || (orientation == Orientation.RIGHT
-                        && lockRect.contains(
-                    middleX - (middleY - touchY),
-                    middleY - (touchX - middleX)
-                ))
-                || (orientation == Orientation.LEFT
-                        && lockRect.contains(
-                    middleX - (middleY - touchY),
-                    canvasHeight - (middleY - (touchX - middleX))
-                ))
+            if ((
+                    (orientation == Orientation.TOP || orientation == Orientation.LANDING) &&
+                        lockRect.contains(touchX, touchY)
+                ) ||
+                (
+                    orientation == Orientation.BOTTOM &&
+                        lockRect.contains(touchX, canvasHeight - touchY)
+                ) ||
+                (
+                    orientation == Orientation.RIGHT &&
+                        lockRect.contains(
+                            middleX - (middleY - touchY),
+                            middleY - (touchX - middleX),
+                        )
+                ) ||
+                (
+                    orientation == Orientation.LEFT &&
+                        lockRect.contains(
+                            middleX - (middleY - touchY),
+                            canvasHeight - (middleY - (touchX - middleX)),
+                        )
+                )
             ) {
                 locked = !locked
                 provider!!.setLocked(locked)
@@ -862,6 +897,6 @@ class LevelPainter(
         private var angle1DispValue = 0f
         private var angle2DispValue = 0f
         private var angleDispUpdateTime = 0L
-        private const val angleDispInterval = 300L
+        private const val ANGLE_DISP_INTERVAL = 300L
     }
 }

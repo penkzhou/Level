@@ -1,3 +1,24 @@
+/*
+ *
+ * Copyright (C) 2014  Antoine Vianey
+ * Copyright (C) 2021- woheller69
+ * Copyright 2024 The Old Autumn Project
+ * An Android Bubble Level application.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Level is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Level. If not, see <http://www.gnu.org/licenses/>
+ *
+ */
 package me.greenrobot.apps.level.view
 
 import android.content.Context
@@ -31,8 +52,10 @@ import me.greenrobot.apps.level.painter.LevelPainter
 *  You should have received a copy of the GNU General Public License
 *  along with Level. If not, see <http://www.gnu.org/licenses/>
 */
-class LevelView(context: Context?, attrs: AttributeSet?) : SurfaceView(context, attrs),
-    SurfaceHolder.Callback, OnTouchListener {
+class LevelView(context: Context?, attrs: AttributeSet?) :
+    SurfaceView(context, attrs),
+    SurfaceHolder.Callback,
+    OnTouchListener {
     private var painter: LevelPainter? = null
 
     init {
@@ -47,7 +70,12 @@ class LevelView(context: Context?, attrs: AttributeSet?) : SurfaceView(context, 
         }
     }
 
-    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+    override fun surfaceChanged(
+        holder: SurfaceHolder,
+        format: Int,
+        width: Int,
+        height: Int,
+    ) {
         if (painter != null) {
             painter!!.setSurfaceSize(width, height)
         }
@@ -69,13 +97,21 @@ class LevelView(context: Context?, attrs: AttributeSet?) : SurfaceView(context, 
         System.gc()
     }
 
-    fun onOrientationChanged(orientation: Orientation?, pitch: Float, roll: Float, balance: Float) {
+    fun onOrientationChanged(
+        orientation: Orientation?,
+        pitch: Float,
+        roll: Float,
+        balance: Float,
+    ) {
         if (painter != null) {
             painter!!.onOrientationChanged(orientation!!, pitch, roll, balance)
         }
     }
 
-    override fun onTouch(v: View, event: MotionEvent): Boolean {
+    override fun onTouch(
+        v: View,
+        event: MotionEvent,
+    ): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN && painter != null) {
             painter!!.onTouch(event.x.toInt(), event.y.toInt())
         }
