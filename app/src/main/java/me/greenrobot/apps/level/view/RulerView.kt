@@ -1,3 +1,24 @@
+/*
+ *
+ * Copyright (C) 2014  Antoine Vianey
+ * Copyright (C) 2021- woheller69
+ * Copyright 2024 The Old Autumn Project
+ * An Android Bubble Level application.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Level is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Level. If not, see <http://www.gnu.org/licenses/>
+ *
+ */
 package me.greenrobot.apps.level.view
 
 import android.content.Context
@@ -41,106 +62,133 @@ class RulerView(context: Context?, var dpmm: Double, var dpfi: Double) : View(co
         drawRightIn(canvas, paint)
     }
 
-    private fun drawLeftCm(canvas: Canvas, paint: Paint) {
+    private fun drawLeftCm(
+        canvas: Canvas,
+        paint: Paint,
+    ) {
         var i = 0
         while (i < heightmm) {
             if (i % 10 == 0) {
-                //draw 8mm line every cm
+                // draw 8mm line every cm
                 canvas.drawLine(
                     0f,
                     dpmm.toFloat() * i,
                     dpmm.toFloat() * 8,
                     dpmm.toFloat() * i,
-                    paint
+                    paint,
                 )
-                //draw a number every cm
+                // draw a number every cm
                 canvas.drawText(
                     "" + i / 10,
                     dpmm.toFloat() * 8 + (textSize / 5f),
                     (dpmm * i + textSize).toFloat(),
-                    paint
+                    paint,
                 )
             } else if (i % 5 == 0) {
-                //draw 5mm line every 5mm
+                // draw 5mm line every 5mm
                 canvas.drawLine(
                     0f,
                     dpmm.toFloat() * i,
                     dpmm.toFloat() * 5,
                     dpmm.toFloat() * i,
-                    paint
+                    paint,
                 )
             } else {
-                //draw 3mm line every mm
+                // draw 3mm line every mm
                 canvas.drawLine(
                     0f,
                     dpmm.toFloat() * i,
                     dpmm.toFloat() * 3,
                     dpmm.toFloat() * i,
-                    paint
+                    paint,
                 )
             }
             i++
         }
     }
 
-    private fun drawRightIn(canvas: Canvas, paint: Paint) {
+    private fun drawRightIn(
+        canvas: Canvas,
+        paint: Paint,
+    ) {
         val path = Path()
 
         var i = 0
         while (i < (heightFracInch)) {
             if (i % 32 == 0) {
-                //draw 8mm line every inch
+                // draw 8mm line every inch
                 canvas.drawLine(
-                    (widthPx - dpmm * (8)).toFloat(), (heightPx - dpfi * (i)).toFloat(),
-                    widthPx.toFloat(), (heightPx - dpfi * (i)).toFloat(), paint
+                    (widthPx - dpmm * (8)).toFloat(),
+                    (heightPx - dpfi * (i)).toFloat(),
+                    widthPx.toFloat(),
+                    (heightPx - dpfi * (i)).toFloat(),
+                    paint,
                 )
-                //draw a number every inch
+                // draw a number every inch
                 path.reset()
                 path.moveTo(
                     (widthPx - dpmm * 8 - textSize / 5).toFloat(),
-                    (heightPx - dpfi * i - textSize * 0.25).toFloat()
+                    (heightPx - dpfi * i - textSize * 0.25).toFloat(),
                 )
                 path.lineTo(
                     (widthPx - dpmm * 8 - textSize / 5).toFloat(),
-                    (heightPx - dpfi * (i) - textSize).toFloat()
+                    (heightPx - dpfi * (i) - textSize).toFloat(),
                 )
                 canvas.drawTextOnPath("" + i / 32, path, 0f, 0f, paint)
             } else if (i % 16 == 0) {
-                //draw 6mm line every 1/2 inch
+                // draw 6mm line every 1/2 inch
                 canvas.drawLine(
-                    (widthPx - dpmm * (6)).toFloat(), (heightPx - dpfi * (i)).toFloat(),
-                    widthPx.toFloat(), (heightPx - dpfi * (i)).toFloat(), paint
+                    (widthPx - dpmm * (6)).toFloat(),
+                    (heightPx - dpfi * (i)).toFloat(),
+                    widthPx.toFloat(),
+                    (heightPx - dpfi * (i)).toFloat(),
+                    paint,
                 )
             } else if (i % 8 == 0) {
-                //draw 4mm line every 1/4 inch
+                // draw 4mm line every 1/4 inch
                 canvas.drawLine(
-                    (widthPx - dpmm * (4)).toFloat(), (heightPx - dpfi * (i)).toFloat(),
-                    widthPx.toFloat(), (heightPx - dpfi * (i)).toFloat(), paint
+                    (widthPx - dpmm * (4)).toFloat(),
+                    (heightPx - dpfi * (i)).toFloat(),
+                    widthPx.toFloat(),
+                    (heightPx - dpfi * (i)).toFloat(),
+                    paint,
                 )
             } else if (i % 4 == 0) {
-                //draw 3mm line every 1/8 inch
+                // draw 3mm line every 1/8 inch
                 canvas.drawLine(
-                    (widthPx - dpmm * (3)).toFloat(), (heightPx - dpfi * (i)).toFloat(),
-                    widthPx.toFloat(), (heightPx - dpfi * (i)).toFloat(), paint
+                    (widthPx - dpmm * (3)).toFloat(),
+                    (heightPx - dpfi * (i)).toFloat(),
+                    widthPx.toFloat(),
+                    (heightPx - dpfi * (i)).toFloat(),
+                    paint,
                 )
             } else if (i % 2 == 0) {
-                //draw 2mm line every 1/16 inch
+                // draw 2mm line every 1/16 inch
                 canvas.drawLine(
-                    (widthPx - dpmm * (2)).toFloat(), (heightPx - dpfi * (i)).toFloat(),
-                    widthPx.toFloat(), (heightPx - dpfi * (i)).toFloat(), paint
+                    (widthPx - dpmm * (2)).toFloat(),
+                    (heightPx - dpfi * (i)).toFloat(),
+                    widthPx.toFloat(),
+                    (heightPx - dpfi * (i)).toFloat(),
+                    paint,
                 )
             } else {
-                //draw 1.5mm line every 1/32 inch
+                // draw 1.5mm line every 1/32 inch
                 canvas.drawLine(
-                    (widthPx - dpmm * (1.5)).toFloat(), (heightPx - dpfi * (i)).toFloat(),
-                    widthPx.toFloat(), (heightPx - dpfi * (i)).toFloat(), paint
+                    (widthPx - dpmm * (1.5)).toFloat(),
+                    (heightPx - dpfi * (i)).toFloat(),
+                    widthPx.toFloat(),
+                    (heightPx - dpfi * (i)).toFloat(),
+                    paint,
                 )
             }
             i++
         }
     }
 
-    fun setCalib(ydpmm: Double, ydpi: Double) {
+    fun setCalib(
+        ydpmm: Double,
+        ydpi: Double,
+    ) {
         dpmm = ydpmm
         dpfi = ydpi
         invalidate()

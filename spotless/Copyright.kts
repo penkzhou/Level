@@ -2,7 +2,7 @@
  *
  * Copyright (C) 2014  Antoine Vianey
  * Copyright (C) 2021- woheller69
- * Copyright 2024 The Old Autumn Project
+ * Copyright $YEAR The Old Autumn Project
  * An Android Bubble Level application.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,14 +19,3 @@
  * along with Level. If not, see <http://www.gnu.org/licenses/>
  *
  */
-package me.greenrobot.apps.level
-
-import android.app.Application
-import me.greenrobot.apps.level.util.PreferenceHelper
-
-class LevelApp : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        PreferenceHelper.initPrefs(this)
-    }
-}

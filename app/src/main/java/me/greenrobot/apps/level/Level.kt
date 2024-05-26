@@ -1,3 +1,24 @@
+/*
+ *
+ * Copyright (C) 2014  Antoine Vianey
+ * Copyright (C) 2021- woheller69
+ * Copyright 2024 The Old Autumn Project
+ * An Android Bubble Level application.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Level is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Level. If not, see <http://www.gnu.org/licenses/>
+ *
+ */
 package me.greenrobot.apps.level
 
 import android.annotation.SuppressLint
@@ -9,7 +30,6 @@ import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.SoundPool
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Menu
@@ -82,18 +102,15 @@ class Level : AppCompatActivity(), OrientationListener {
         levelView = findViewById(R.id.main_levelView)
 
         // sound
-        soundPool = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        soundPool =
             SoundPool.Builder()
                 .setMaxStreams(1)
                 .setAudioAttributes(
                     AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
-                        .build()
+                        .build(),
                 )
                 .build()
-        } else {
-            SoundPool(1, AudioManager.STREAM_RING, 0)
-        }
 
         bipSoundID = soundPool!!.load(this, R.raw.bip, 1)
         bipRate = resources.getInteger(R.integer.bip_rate)
@@ -112,7 +129,10 @@ class Level : AppCompatActivity(), OrientationListener {
         return true
     }
 
-    override fun onPanelClosed(featureId: Int, menu: Menu) {
+    override fun onPanelClosed(
+        featureId: Int,
+        menu: Menu,
+    ) {
         if (rulerView != null) {
             setFullscreenMode()
         }
@@ -120,7 +140,7 @@ class Level : AppCompatActivity(), OrientationListener {
         super.onPanelClosed(featureId, menu)
     }
 
-    /* Handles item selections */
+    // Handles item selections
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menu_calibrate) {
             if (rulerView == null) {
@@ -142,7 +162,7 @@ class Level : AppCompatActivity(), OrientationListener {
                     Toast.makeText(
                         this,
                         getString(R.string.calibrate) + " \u25b2\u25bc",
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_LONG,
                     ).show()
                     rulerCalView = VerticalSeekBar(this)
                     rulerCalView!!.max = 200
@@ -150,12 +170,13 @@ class Level : AppCompatActivity(), OrientationListener {
                     rulerCalView!!.thumb = ContextCompat.getDrawable(context!!, R.drawable.ic_fine)
                     rulerCalView!!.thumb.setColorFilter(
                         getThemeColor(context, R.attr.colorAccent),
-                        PorterDuff.Mode.MULTIPLY
+                        PorterDuff.Mode.MULTIPLY,
                     )
-                    val layoutParams = RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
+                    val layoutParams =
+                        RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                        )
                     layoutParams.setMargins(rulerLayout.width * 3 / 8, 0, 0, 0)
                     rulerCalView!!.layoutParams = layoutParams
                     rulerCoarseCalView = VerticalSeekBar(this)
@@ -166,22 +187,25 @@ class Level : AppCompatActivity(), OrientationListener {
                     rulerCoarseCalView!!.thumb.setColorFilter(
                         getThemeColor(
                             context,
-                            R.attr.colorAccent
-                        ), PorterDuff.Mode.MULTIPLY
+                            R.attr.colorAccent,
+                        ),
+                        PorterDuff.Mode.MULTIPLY,
                     )
-                    val layoutParams2 = RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
+                    val layoutParams2 =
+                        RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                        )
                     layoutParams2.setMargins(0, 0, rulerLayout.width * 3 / 8, 0)
                     layoutParams2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT)
                     rulerCoarseCalView!!.layoutParams = layoutParams2
 
                     rulerResetButtonView = AppCompatImageButton(this)
-                    val layoutParams3 = RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                    )
+                    val layoutParams3 =
+                        RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                        )
                     layoutParams3.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE)
                     layoutParams3.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE)
                     rulerResetButtonView!!.layoutParams = layoutParams3
@@ -190,48 +214,55 @@ class Level : AppCompatActivity(), OrientationListener {
                     rulerLayout.addView(rulerCalView)
                     rulerLayout.addView(rulerCoarseCalView)
 
-                    rulerCalView!!.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
-                        override fun onProgressChanged(
-                            seekBar: SeekBar,
-                            progress: Int,
-                            fromUser: Boolean
-                        ) {
-                            rulerView!!.setCalib(
-                                getDpmmCal(
-                                    progress,
-                                    rulerCoarseCalView!!.progress
-                                ).toDouble(),
-                                getDpmmCal(progress, rulerCoarseCalView!!.progress) * 25.4 / 32
-                            )
-                            val editor = sp.edit()
-                            editor.putInt("pref_rulercal", progress)
-                            editor.apply()
-                        }
+                    rulerCalView!!.setOnSeekBarChangeListener(
+                        object : OnSeekBarChangeListener {
+                            override fun onProgressChanged(
+                                seekBar: SeekBar,
+                                progress: Int,
+                                fromUser: Boolean,
+                            ) {
+                                rulerView!!.setCalib(
+                                    getDpmmCal(
+                                        progress,
+                                        rulerCoarseCalView!!.progress,
+                                    ).toDouble(),
+                                    getDpmmCal(progress, rulerCoarseCalView!!.progress) * 25.4 / 32,
+                                )
+                                val editor = sp.edit()
+                                editor.putInt("pref_rulercal", progress)
+                                editor.apply()
+                            }
 
-                        override fun onStartTrackingTouch(seekBar: SeekBar) {}
-                        override fun onStopTrackingTouch(seekBar: SeekBar) {}
-                    })
-                    rulerCoarseCalView!!.setOnSeekBarChangeListener(object :
-                        OnSeekBarChangeListener {
-                        override fun onProgressChanged(
-                            seekBar: SeekBar,
-                            progress: Int,
-                            fromUser: Boolean
-                        ) {
-                            rulerView!!.setCalib(
-                                getDpmmCal(rulerCalView!!.progress, progress).toDouble(),
-                                getDpmmCal(
-                                    rulerCalView!!.progress, progress
-                                ) * 25.4 / 32
-                            )
-                            val editor = sp.edit()
-                            editor.putInt("pref_rulercoarsecal", progress)
-                            editor.apply()
-                        }
+                            override fun onStartTrackingTouch(seekBar: SeekBar) {}
 
-                        override fun onStartTrackingTouch(seekBar: SeekBar) {}
-                        override fun onStopTrackingTouch(seekBar: SeekBar) {}
-                    })
+                            override fun onStopTrackingTouch(seekBar: SeekBar) {}
+                        },
+                    )
+                    rulerCoarseCalView!!.setOnSeekBarChangeListener(
+                        object :
+                            OnSeekBarChangeListener {
+                            override fun onProgressChanged(
+                                seekBar: SeekBar,
+                                progress: Int,
+                                fromUser: Boolean,
+                            ) {
+                                rulerView!!.setCalib(
+                                    getDpmmCal(rulerCalView!!.progress, progress).toDouble(),
+                                    getDpmmCal(
+                                        rulerCalView!!.progress,
+                                        progress,
+                                    ) * 25.4 / 32,
+                                )
+                                val editor = sp.edit()
+                                editor.putInt("pref_rulercoarsecal", progress)
+                                editor.apply()
+                            }
+
+                            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+
+                            override fun onStopTrackingTouch(seekBar: SeekBar) {}
+                        },
+                    )
                     rulerResetButtonView!!.setOnClickListener { view: View? ->
                         rulerCalView!!.progress = 100
                         rulerCoarseCalView!!.progress = 2000
@@ -254,10 +285,10 @@ class Level : AppCompatActivity(), OrientationListener {
             startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("https://github.com/penkzhou/level")
-                )
+                    Uri.parse("https://github.com/penkzhou/level"),
+                ),
             )
-            recreate() //fix strange action bar position when coming from ruler
+            recreate() // fix strange action bar position when coming from ruler
             return true
         } else if (item.itemId == R.id.menu_ruler) {
             showRuler(!item.isChecked)
@@ -327,15 +358,17 @@ class Level : AppCompatActivity(), OrientationListener {
         orientation: Orientation?,
         pitch: Float,
         roll: Float,
-        balance: Float
+        balance: Float,
     ) {
-        if ((soundEnabled
-                    && orientation!!.isLevel(
-                pitch,
-                roll,
-                balance,
-                provider!!.sensibility
-            )) && System.currentTimeMillis() - lastBip > bipRate
+        if ((
+                soundEnabled &&
+                    orientation!!.isLevel(
+                        pitch,
+                        roll,
+                        balance,
+                        provider!!.sensibility,
+                    )
+            ) && System.currentTimeMillis() - lastBip > bipRate
         ) {
             val mgr = getSystemService(AUDIO_SERVICE) as AudioManager
             val streamVolumeCurrent = mgr.getStreamVolume(AudioManager.STREAM_RING).toFloat()
@@ -349,37 +382,44 @@ class Level : AppCompatActivity(), OrientationListener {
 
     override fun onCalibrationReset(success: Boolean) {
         Toast.makeText(
-            this, if (success) R.string.calibrate_restored else R.string.calibrate_failed,
-            Toast.LENGTH_LONG
+            this,
+            if (success) R.string.calibrate_restored else R.string.calibrate_failed,
+            Toast.LENGTH_LONG,
         ).show()
     }
 
     override fun onCalibrationSaved(success: Boolean) {
         Toast.makeText(
-            this, if (success) R.string.calibrate_saved else R.string.calibrate_failed,
-            Toast.LENGTH_LONG
+            this,
+            if (success) R.string.calibrate_saved else R.string.calibrate_failed,
+            Toast.LENGTH_LONG,
         ).show()
     }
 
-    fun getDpmmCal(progress: Int, coarseProgress: Int): Float {
+    fun getDpmmCal(
+        progress: Int,
+        coarseProgress: Int,
+    ): Float {
         val dpmm = (resources.displayMetrics.ydpi / 25.4).toFloat()
         return dpmm * (1 + (progress + coarseProgress - 100f - 2000f) / 5000f)
     }
 
     private fun setFullscreenMode() {
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE or
-                View.SYSTEM_UI_FLAG_FULLSCREEN or
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            View.SYSTEM_UI_FLAG_FULLSCREEN or
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }
-
 
     companion object {
         @JvmStatic
         var provider: OrientationProvider? = null
             private set
 
-        fun getThemeColor(context: Context?, colorResId: Int): Int {
+        fun getThemeColor(
+            context: Context?,
+            colorResId: Int,
+        ): Int {
             val typedValue = TypedValue()
             val typedArray =
                 context!!.obtainStyledAttributes(typedValue.data, intArrayOf(colorResId))
