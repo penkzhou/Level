@@ -108,6 +108,7 @@ class OrientationProvider(context: Context?) : SensorEventListener {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             this.displayOrientation = activity!!.display!!.rotation
         } else {
+            @Suppress("DEPRECATION")
             this.displayOrientation = activity!!.windowManager.defaultDisplay.rotation
         }
     }
