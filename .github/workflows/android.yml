@@ -27,3 +27,11 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+
+    - name: Lint
+      run: ./gradlew lint
+
+    - name: Check and report lint results
+      uses: hidakatsuya/action-report-android-lint@v1.2.0
+      with:
+        result-path: 'app/build/reports/lint-results-debug.xml'
